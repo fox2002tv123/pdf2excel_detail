@@ -100,9 +100,15 @@ def run(data):
         sub_4
         df_sub_4=pd.DataFrame(sub_4,columns=list('ABCDFIKL'))
         df_sub_4
+        
+        # 5.提取F111
+        F111=re.findall(r'(9999001386) (4) (\S+) (\S+) (\S+) (\S+) (\S+)',detail_list[19])
+        F111
+        df_F111=pd.DataFrame(F111,columns=list('ABCFIKL'))
+        df_F111
 
         # 
-        # 5.找到单行的表头
+        # 6.找到单行的表头
         p=r'(\d{5,6}) (\S{17}) (\S{6})'
         one_head=re.findall(p,i)
         one_head
@@ -116,7 +122,7 @@ def run(data):
 
         # 
         # 拼接dataframe
-        res_one_part=pd.concat([df_FRU,df_part_normal,df_part_BSI,df_sub_4,df_na],axis=0)
+        res_one_part=pd.concat([df_FRU,df_part_normal,df_part_BSI,df_sub_4,df_F111,df_na],axis=0)
         # column 按照字母排序
         res_one_part.sort_index(axis=1,inplace=True)
         # claim vin dwp 插入前三列
@@ -125,10 +131,10 @@ def run(data):
         res_one_part.insert(2,'dwp',dwp)
         res_list.append(res_one_part)
 
-    res=pd.concat(res_list,axis=0)
+    res1=pd.concat(res_list,axis=0)
     # 将A-L列转换为数值
     # res[list('ABCDEFJHIJKL')]=res[list('ABCDEFJHIJKL')].apply(pd.to_numeric,errors='ignore')
-    res=res.to_csv(index=False)
+    res=res1.to_csv(index=False)
     # df1=res.copy()
     # new_columns=['DWP','CLAIM','VIN','NO','DATE','1','2','3','4','5','TOTAL']
     # df1.rename(columns=dict(zip(alist,new_columns)),inplace=True)
