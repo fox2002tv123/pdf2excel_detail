@@ -128,7 +128,7 @@ def run(data):
     res=pd.concat(res_list,axis=0)
     # 将A-L列转换为数值
     # res[list('ABCDEFJHIJKL')]=res[list('ABCDEFJHIJKL')].apply(pd.to_numeric,errors='ignore')
-    res
+    res=res.to_csv(index=False)
     # df1=res.copy()
     # new_columns=['DWP','CLAIM','VIN','NO','DATE','1','2','3','4','5','TOTAL']
     # df1.rename(columns=dict(zip(alist,new_columns)),inplace=True)
