@@ -102,7 +102,7 @@ def run(data):
         df_sub_4
         
         # 5.提取F111
-        F111=re.findall(r'(9999001386) (4) (\S+) (\S+) (\S+) (\S+) (\S+)',detail_list[19])
+        F111=re.findall(r'(9999001386) (4) (\S+) (\S+) (\S+) (\S+) (\S+)',i)
         F111
         df_F111=pd.DataFrame(F111,columns=list('ABCFIKL'))
         df_F111
