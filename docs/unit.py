@@ -183,6 +183,8 @@ def run(data):
     # ! res 插入 res_number 位置4
     res.insert(3, 'Credit_date', res_date)
     res.insert(4, 'Credit_number', res_number)
+    # !重命名列 list('ABCDEFGHIJKL') 为 ['Defect_Code','Item_Key','Amount','Contribution','RP','Quantity','MAT','FR','SUBL','H_cost','TAX','Total']
+    res.rename(columns=dict(zip(list('ABCDEFGHIJKL'), ['Defect_Code', 'Item_Key', 'Amount', 'Contribution', 'RP', 'Quantity', 'MAT', 'FR', 'SUBL', 'H_cost', 'TAX', 'Total'])), inplace=True)
     res = res.to_csv(index=False)
     
     return res_number, res_date, s, res  # 返回对账单序列号和对账单日期
