@@ -79,6 +79,11 @@ def run(data):
             df_FRU = pd.DataFrame(FRU, columns=list('ABCDFHKL'))
             concat_list.append(df_FRU)
         
+        #! 1.1 提取工时行-PDI工时
+        FRU_PDI=re.findall(r'(\S{10}) (\d{7}) (\S+) (\S+) (\S+) (\S+) (\S+)$',i,re.MULTILINE)
+        if FRU_PDI:
+            df_FRU_PDI=pd.DataFrame(FRU_PDI,columns=list('ABCFHKL'))
+            concat_list.append(df_FRU_PDI)
 
         #
         #   2.提取零件行-正常配件
@@ -114,7 +119,7 @@ def run(data):
         df_part_short_detail
         if df_part_short_detail:
             df_short = pd.DataFrame(
-                df_part_short_detail, columns=list('ABCDFGJKL'))
+                df_part_short_detail, columns=list('ABCEFGJKL'))
             concat_list.append(df_short)
         #
         # 5.提取辅料
@@ -126,21 +131,35 @@ def run(data):
             concat_list.append(df_sub_4)
 
 
-        # 6.提取F111
-        F111 = re.findall(r'(9999001386) (4) (\S+) (\S+) (\S+) (\S+) (\S+)', i)
+        # 6.提取F111+辅料
+        F111 = re.findall(r'(\S{10}) (\S{1}) (\S+) (\S+) (\S+) (\S+) (\S+)$', i,re.MULTILINE)
         F111
         if F111:
             df_F111 = pd.DataFrame(F111, columns=list('ABCFIKL'))
             concat_list.append(df_F111)
 
+            # !实现故障代码判断,warranty_type,包含三种状态 BSI VSP WAR
+        if re.findall(r'9999001386',i,re.MULTILINE):
+            res_type='VSP'
+        elif re.findall(r'87\d{6}86',i,re.MULTILINE):
+            res_type='BSI'
+        else:
+            res_type='WAR'
+            
         #
-        # 7.找到单行的表头
-        p = r'(\d{5,6}) (\S{17}) (\S{6})'
-        one_head = re.findall(p, i)
-        one_head
-        claim, vin, dwp = one_head[0]
-        claim, vin, dwp
-
+            # ! 6.找到单行的表头 需覆盖
+        p = r'(\S+) (\S{17}) (\S{6})'
+        one_head = re.findall(p, i,re.MULTILINE)
+        p=r'^(\S{17}) (\S{6})$'
+        no_claim_head=re.findall(p,i,re.MULTILINE)
+        if one_head: # claim,vin,dwp都齐全的情况,使用[0]是re两层 ([])
+            claim, vin, dwp = one_head[0]
+            claim, vin, dwp
+        elif no_claim_head: # claim缺失的情况
+            vin,dwp=no_claim_head[0]
+            claim=''
+        else: # vin,dwp缺失的情况
+            claim, vin, dwp=['','','']
         #
         # 建立一个空的dataframe，只包括表头-作用是避免漏掉没有数据的列
         df_na = pd.DataFrame(columns=list('ABCDEFGHIJKL'))
@@ -155,10 +174,16 @@ def run(data):
         res_one_part.insert(0, 'claim', claim)
         res_one_part.insert(1, 'vin', vin)
         res_one_part.insert(2, 'dwp', dwp)
+        # ! 7.插入warranty_type
+        res_one_part.insert(3, 'warranty_type', res_type)
         res_list.append(res_one_part)
 
-    res1 = pd.concat(res_list, axis=0)
-    res = res1.to_csv(index=False)
+    res = pd.concat(res_list, axis=0)
+    # ! res 插入 res_date 位置3
+    # ! res 插入 res_number 位置4
+    res.insert(3, 'Credit_date', res_date)
+    res.insert(4, 'Credit_number', res_number)
+    res = res.to_csv(index=False)
     
     return res_number, res_date, s, res  # 返回对账单序列号和对账单日期
     
