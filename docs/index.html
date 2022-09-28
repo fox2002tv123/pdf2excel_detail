@@ -2,8 +2,8 @@
  * @Author: bob
  * @Date: 2022-05-25 10:09:23
  * @LastEditors: bob
- * @LastEditTime: 2022-09-27 21:01:22
- * @FilePath: \pdf2excel_detail\docs\index.html
+ * @LastEditTime: 2022-09-28 19:36:07
+ * @FilePath: \detail2excel\index.html
  * @Description: 最终版本,可以使用
  * 
  * Copyright (c) 2022 by bob, All Rights Reserved. 
@@ -81,7 +81,7 @@
                 document.body.appendChild(element);
                 element.click();
                 document.body.removeChild(element);
-                alert(text)
+                alert('下载已完成')
             }
             // 下载文件函数-备用1
             function downloadFile(fileName, content){
@@ -124,7 +124,7 @@ def show(*args, **kwargs): # 显示
         js.alert('请输入数据')
         return
     elif 'Credit Note Number' in txt_message.value:
-        js.alert('运行中请稍后...') # 等待文本...
+        # js.alert('运行中请稍后...') # 等待文本...
         res_list=run(txt_message.value) # 运行
         # container.write('ok') # 输出文本框的长度
         js.alert('运行完成')
