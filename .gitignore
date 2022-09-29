@@ -1,3 +1,5 @@
 docs\data.txt
 data.txt
 *.xlsx
+main.ipynb
+test.py
